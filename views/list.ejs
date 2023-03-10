@@ -1,0 +1,20 @@
+<%- include('header'); -%>
+    <div class="box" id="heading">
+        <h1> <%= listTitle %> </h1>
+    </div>
+    <div class="box">
+            <% for(var i=0;i<latest.length;i++) { %>
+               <!-- <li> <%= latest[i] %> </li> -->
+               <div class="item">
+                  <input type="checkbox">
+                  <p> <%= latest[i] %></p>
+               </div>
+           <% } %>
+            <!-- <h3>Do you Want to add new task ?</h3> -->
+            <form  class="item" action="/" method="post">
+            <!-- Sending data to the server -->
+           <input type="text" id="name" name="task" placeholder="New Item">
+           <button name="button" type="submit" value=<%= listTitle %> >+</button>
+           </form>
+    </div>
+<%- include('footer'); -%>
