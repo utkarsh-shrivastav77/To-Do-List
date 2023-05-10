@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const date = require(__dirname + "/date.js")
+const mongoose = require('mongoose');
 const app = express()
 app.use(bodyParser.urlencoded({extended : true}));
 
@@ -8,15 +8,43 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(express.static('public'));
 app.use('*/css',express.static('public/css'));
 
-let datas = [];
-let workItem = [];
+
+mongoose.connect('mongodb://127.0.0.1:27017/ListDB');
 let day = "";
 app.set("view engine", "ejs");
 // app.use(express.static("public"));
-app.get("/",function(req,res){
-    let day = date.getDate()
-    res.render('list',{listTitle : day, latest : datas})
+
+const itemSchema = new mongoose.Schema({
+  name: "String",
 });
+
+const Item = mongoose.model("Item",itemSchema);
+
+const item1 = new Item ({
+  name: "Welcome to the To-Do list"
+});
+
+const item2 = new Item ({
+  name: "Click on the + button to append the work in list"
+});
+
+const item3 = new Item ({
+  name: "<-- Click here to delete the work items"
+});
+
+const defaultArr = [item1, item2,item3];
+// Item.insertMany(defaultArr);
+app.get("/",function(req,res){
+
+  const getdata = async() => {
+    var x = await Item.find({})
+    res.render('list',{listTitle : "Today", latest : x})
+  };
+
+  getdata();
+});
+
+
 
 app.post("/",function(req,res){
       let data = req.body.task
