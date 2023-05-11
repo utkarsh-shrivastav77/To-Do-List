@@ -3,12 +3,15 @@
         <h1> <%= listTitle %> </h1>
     </div>
     <div class="box">
-         <%  latest.forEach(function(item) { %>
+        <form action="/delete" method="post">
+            <%  latest.forEach(function(item) { %>
                <div class="item">
-                  <input type="checkbox">
+                  <input type="checkbox" name="checkbox" value="<%= item._id %>" onchange="this.form.submit()">
                   <p> <%= item.name %></p>
                </div>
            <% }) %>
+
+        </form>
             <!-- <h3>Do you Want to add new task ?</h3> -->
             <form  class="item" action="/" method="post">
             <!-- Sending data to the server -->

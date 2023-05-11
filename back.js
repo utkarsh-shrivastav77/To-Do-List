@@ -33,12 +33,26 @@ const item3 = new Item ({
 });
 
 const defaultArr = [item1, item2,item3];
-// Item.insertMany(defaultArr);
+
+
+const listSchema = new mongoose.Schema ({
+  name : String,
+  items: [itemSchema]
+});
+
+const List = mongoose.model("List",listSchema)
 app.get("/",function(req,res){
 
   const getdata = async() => {
     var x = await Item.find({})
-    res.render('list',{listTitle : "Today", latest : x})
+    if(x.length == 0 )
+    {
+      Item.insertMany(defaultArr);
+      res.redirect("/")
+    }
+    else{
+      res.render('list',{listTitle : "Today", latest : x})
+    }
   };
 
   getdata();
@@ -47,31 +61,68 @@ app.get("/",function(req,res){
 
 
 app.post("/",function(req,res){
-      let data = req.body.task
-    //   console.log(req.body.button)
-      if(req.body.button === "Work")
-      {
-        // console.log("This is being used")
-         workItem.push(data)
-         res.redirect("/work")
+      const ItemName = req.body.task;
 
-      }
-      else
-      {
-        // console.log("This else is being used")
-        datas.push(data)
-        // res.render('list',{Data: data});
-        res.redirect("/")
-      }
+      const addItem = new Item ({
+        name: ItemName
+      });
+      addItem.save();
+      res.redirect("/");
+    //   console.log(req.body.button)
+      // if(req.body.button === "Work")
+      // {
+      //   // console.log("This is being used")
+      //    workItem.push(data)
+      //    res.redirect("/work")
+
+      // }
+      // else
+      // {
+      //   // console.log("This else is being used")
+      //   datas.push(data)
+      //   // res.render('list',{Data: data});
+      //   res.redirect("/")
+      // }
 })
+
+app.get("/:customListName",function(req,res){
+  const customListName = req.params.customListName;
+
+  const found = async() => {
+    var d = await List.findOne({name: customListName});
+    if(!d)
+    {
+      //Create a new list
+      const list = new List ({
+        name: customListName,
+        items: defaultArr
+      });
+    
+      list.save();
+      res.redirect("/" + customListName);
+    }
+    else{
+      res.render("list",{listTitle : d.name, latest : d.items})
+    }
+  }
+
+  found();
+
+})
+
+app.post("/delete",function(req,res){
+  const checkedId = req.body.checkbox;
+  Item.findByIdAndRemove(checkedId).exec();
+  res.redirect("/")
+});
+
+
 
 app.get("/about",function(req,res){
     res.render('about')
 })
 
-app.get("/work",function(req,res){
-    res.render('list',{listTitle : "Work List",latest : workItem})
-})
+
 
 // app.post("/work",function(req,res){
 //     let item = req.body.task
