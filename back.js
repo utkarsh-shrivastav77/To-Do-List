@@ -15,7 +15,7 @@ app.set("view engine", "ejs");
 // app.use(express.static("public"));
 
 const itemSchema = new mongoose.Schema({
-  name: "String",
+  name: "string",
 });
 
 const Item = mongoose.model("Item",itemSchema);
@@ -62,12 +62,39 @@ app.get("/",function(req,res){
 
 app.post("/",function(req,res){
       const ItemName = req.body.task;
+      const ListName = req.body.button;
 
       const addItem = new Item ({
         name: ItemName
       });
-      addItem.save();
-      res.redirect("/");
+
+      if(ListName === "Today")
+      {
+        addItem.save();
+        res.redirect("/");
+      }
+      else
+      {
+       const find = async() => {
+         var x = await List.findOne({name: ListName});
+         if(x)
+         {
+          x.items.push(addItem);
+          x.save();
+          res.redirect("/" + ListName);
+          }
+          else
+          {
+            const newList = new List ({
+              name: ListName,
+              items: [addItem]
+              });
+            }
+       };
+
+        //  var arr = find();
+         find();
+       }
     //   console.log(req.body.button)
       // if(req.body.button === "Work")
       // {
