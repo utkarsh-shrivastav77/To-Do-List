@@ -137,7 +137,7 @@ app.get("/:customListName",function(req,res){
 
 })
 
-app.post("/delete",function(req,res){
+app.post("/delete",async function(req,res){
   const checkedId = req.body.checkbox;
   const listName = req.body.database;
 
@@ -147,8 +147,8 @@ app.post("/delete",function(req,res){
     res.redirect("/")
   }
   else{
-    listName.findByIdAndRemove(checkedId).exec();
-    res.redirect("/" + listName.name)
+    List.findOneAndUpdate({name: listName},{$pull: {items: {_id: checkedId}}}).exec();
+    res.redirect("/" + listName)
   }
 });
 
