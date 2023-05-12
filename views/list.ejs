@@ -9,9 +9,9 @@
                   <input type="checkbox" name="checkbox" value="<%= item._id %>" onchange="this.form.submit()">
                   <p> <%= item.name %></p>
                </div>
-           <% }) %>
-
+               <input type="hidden" name="database" value=<%= listTitle %> >
         </form>
+           <% }) %>
             <!-- <h3>Do you Want to add new task ?</h3> -->
             <form  class="item" action="/" method="post">
             <!-- Sending data to the server -->

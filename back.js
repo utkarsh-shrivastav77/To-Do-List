@@ -139,8 +139,17 @@ app.get("/:customListName",function(req,res){
 
 app.post("/delete",function(req,res){
   const checkedId = req.body.checkbox;
-  Item.findByIdAndRemove(checkedId).exec();
-  res.redirect("/")
+  const listName = req.body.database;
+
+  if(listName === "Today")
+  {
+    Item.findByIdAndRemove(checkedId).exec();
+    res.redirect("/")
+  }
+  else{
+    listName.findByIdAndRemove(checkedId).exec();
+    res.redirect("/" + listName.name)
+  }
 });
 
 
